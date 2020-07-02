@@ -1,18 +1,4 @@
-#include <stdio.h> 
-#include <stdlib.h> 
-#include <string.h>
-#include <stdbool.h>
-
-#define CHARSIZE 256
-typedef struct Node Node;
-typedef struct List List;
-
-struct Node { 
-    int valLen;
-	char* value;
-    Node* children[CHARSIZE];
-    //Node * parent;
-}; 
+#include "trie.h"
 
 void free_node(Node* node) {
     if (node == NULL) {
