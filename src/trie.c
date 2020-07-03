@@ -1,4 +1,5 @@
 #include "trie.h"
+#define MIN(a,b) ((a) < (b) ? (a) : (b))
 
 void free_node(Node* node) {
     if (node == NULL) {
@@ -27,13 +28,24 @@ Value* create_value(char* value, int valLen) {
 }
 
 Node* createNode() {
-    Node* trie = (Node*) malloc(sizeof(Node));
-    //trie->parent = parent;
+    Node* node = (Node*) malloc(sizeof(Node));
+    return node;
+}
+
+void free_trie(Trie* trie) {
+    free_node(trie->root);
+    free(trie);
+}
+
+Trie* createTrie() {
+    Trie* trie = (Trie*) malloc(sizeof(Trie));
+    trie->size = 0;
+    trie->root = createNode();
     return trie;
 }
 
-void putVal(Node* trie, int keyLen, char* key, int valLen, char* val) {
-    Node* temp = trie;
+void putVal(Trie* trie, int keyLen, char* key, int valLen, char* val) {
+    Node* temp = trie->root;
     for (int i = 0; i < keyLen; i++) {
         unsigned char c = key[i];
         if (temp->children[c] == NULL) {
@@ -44,11 +56,14 @@ void putVal(Node* trie, int keyLen, char* key, int valLen, char* val) {
     if (temp->value != NULL) {
         free_value(temp->value);
     }
+    else {
+        ++trie->size;
+    }
     temp->value = create_value(val, valLen);
 }
 
-void delVal(Node* trie, int keyLen, char* key) {
-    Node* temp = trie;
+void delVal(Trie* trie, int keyLen, char* key) {
+    Node* temp = trie->root;
     for (int i = 0; i < keyLen; i++) {
         unsigned char c = key[i];
         temp = temp->children[c];
@@ -59,11 +74,12 @@ void delVal(Node* trie, int keyLen, char* key) {
     if (temp->value != NULL) {
         free_value(temp->value);
         temp->value = NULL;
+        --trie->size;
     }
 }
 
-Value* getVal(Node* trie, int keyLen, char* key) {
-    Node* temp = trie;
+Value* getVal(Trie* trie, int keyLen, char* key) {
+    Node* temp = trie->root;
     for (int i = 0; i < keyLen; i++) {
         unsigned char c = key[i];
         temp = temp->children[c];
@@ -72,4 +88,30 @@ Value* getVal(Node* trie, int keyLen, char* key) {
         }
     }
     return temp->value;
+}
+
+Key** getKeys(Trie* trie, int limit) {
+    Key** keys = (Key**) calloc(MIN(limit, trie->size), sizeof(Key*));
+    get_node_keys(keys, trie->root, "", 0, 0);
+    return keys;
+}
+
+int get_node_keys(Key** key_aggregator, Node* root_node, char * path, int length, int count) {
+    int newcount = count;
+    if (root_node->value) {
+        key_aggregator[count] = (Key*) malloc(sizeof(Key));
+        key_aggregator[count]->key = malloc(length);
+        memcpy(key_aggregator[count]->key, path, length);
+        newcount++;
+    }
+    for (int i = 0; i < CHARSIZE; i++) {
+        if (root_node->children[i]) {
+            char * newpath = malloc(length + 1);
+            memcpy(newpath, path, length);
+            newpath[length] = i;
+            newcount = get_node_keys(key_aggregator, root_node->children[i], newpath, length + 1, newcount);
+            free(newpath);
+        }
+    }
+    return newcount;
 }

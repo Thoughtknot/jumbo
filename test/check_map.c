@@ -26,6 +26,7 @@ START_TEST (test_map_basic)
     ck_assert_str_eq(val4->value, "Rs");
     ck_assert(val5 == NULL);
     ck_assert(memcmp(val6->value, "45", val6->valueSize) == 0);
+
     free_map(root);
 }
 END_TEST

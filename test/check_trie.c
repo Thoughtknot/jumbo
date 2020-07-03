@@ -5,7 +5,7 @@
 
 START_TEST (test_trie_basic)
 {
-    Node* root = createNode();
+    Trie* root = createTrie();
     putVal(root, 4, "test", 2, "-1-");
     putVal(root, 4, "team", 5, "-heal");
     putVal(root, 4, "test", 2, "99");
@@ -28,7 +28,17 @@ START_TEST (test_trie_basic)
     ck_assert_str_eq(val4->value, "Rs");
     ck_assert(val5 == NULL);
     ck_assert_str_eq(val6->value, "45");
-    free_node(root);
+
+    ck_assert_int_eq(root->size, 3);
+
+    Key** keys = getKeys(root, 10);
+    ck_assert(keys != NULL);
+
+    ck_assert_str_eq(keys[0]->key, "roast");
+    ck_assert_str_eq(keys[1]->key, "tea");
+    ck_assert_str_eq(keys[2]->key, "test");
+    free(keys);
+    free_trie(root);
 }
 END_TEST
 

@@ -14,10 +14,17 @@ struct Value {
     char* value;
 };
 
+typedef struct KeyValue KeyValue;
+
+struct KeyValue {
+    Key* key;
+    Value* value;
+};
+
 typedef struct Object Object;
- 
 struct Object {
     int size;
     char* bytes;
 };
+
 #endif

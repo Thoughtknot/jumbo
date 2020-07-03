@@ -5,13 +5,6 @@
 #include <string.h>
 #include "common.h"
 
-typedef struct KeyValue KeyValue;
-
-struct KeyValue {
-    Key* key;
-    Value* value;
-};
-
 typedef struct LinkedEntries LinkedEntries;
 
 struct LinkedEntries {
