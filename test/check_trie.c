@@ -1,5 +1,6 @@
 #include <check.h>
 #include "../src/trie.h"
+#include "check_map.c"
 
 START_TEST (test_trie_basic)
 {
@@ -12,17 +13,20 @@ START_TEST (test_trie_basic)
     char * val1 = getVal(root, 3, "tea");
     char * val2 = getVal(root, 4, "team");
     char * val3 = getVal(root, 4, "test");
-    char * valr = getVal(root, 5, "roast");
-    printf("Val: %s\n", val1);
-    printf("Val: %s\n", val2);
-    printf("Val: %s\n", val3);
-    printf("Val: %s\n", valr);
-    
-    putVal(root, 3, "tea", 2, "44");
-    char * val4 = getVal(root, 3, "tea");
-    printf("Val: %s\n", val4);
+    char * val4 = getVal(root, 5, "roast");
 
-    ck_assert_str_eq(val4, "44");
+    delVal(root, 4, "team");
+    char * val5 = getVal(root, 4, "team");
+
+    putVal(root, 3, "tea", 2, "45");
+    char * val6 = getVal(root, 3, "tea");
+
+    ck_assert(val1 == NULL);
+    ck_assert(val2 == NULL);
+    ck_assert_str_eq(val3, "99");
+    ck_assert_str_eq(val4, "Rs");
+    ck_assert(val5 == NULL);
+    ck_assert_str_eq(val6, "45");
     free_node(root);
 }
 END_TEST
@@ -38,6 +42,7 @@ Suite * suite(void)
     tc_core = tcase_create("Core");
 
     tcase_add_test(tc_core, test_trie_basic);
+    tcase_add_test(tc_core, test_map_basic);
     suite_add_tcase(s, tc_core);
 
     return s;

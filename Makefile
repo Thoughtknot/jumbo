@@ -8,7 +8,9 @@ make:
 
 checks:
 	gcc test/check_trie.c -c -o check_trie.o
-	gcc trie.o check_trie.o -o test_suite `pkg-config --cflags --libs check`
+	gcc test/check_map.c -c -o check_map.o
+	gcc trie.o map.o check_trie.o check_map.o -o test_suite `pkg-config --cflags --libs check`
+	./test_suite
 
 clean:
 	rm *.o jumbo test_suite

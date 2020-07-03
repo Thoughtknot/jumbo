@@ -9,6 +9,8 @@ unsigned long hash(int size, int len, char* str) {
  
 LinkedEntries* linked_entries() {
     LinkedEntries* list = (LinkedEntries*) malloc (sizeof(LinkedEntries));
+    list->entry = NULL;
+    list->next = NULL;
     return list;
 }
 
@@ -133,18 +135,20 @@ void put(HashMap* table, int keyLen, char* key, int valLen, char* value) {
 }
 
 void free_list(LinkedEntries* list) {
-    while (list) {
-        LinkedEntries* temp = list;
-        list = list->next;
+    LinkedEntries* temp = list;
+    while (temp) {
         free_entry(temp->entry);
+        temp->entry == NULL;
         free(temp);
+        temp = temp->next;
     }
 }
 
 void free_entry(KeyValue* entry) {
-    // Frees an item
     free(entry->key->key);
+    entry->key->key = NULL;
     free(entry->key);
+    entry->key = NULL;
     if (entry->value != NULL) {
         free(entry->value->value);
         free(entry->value);
@@ -155,9 +159,9 @@ void free_entry(KeyValue* entry) {
 void free_overflow_buckets(HashMap* table) {
     // Free all the overflow bucket lists
     LinkedEntries** buckets = table->entries;
-    for (int i = 0; i < table->size; i++)
+    for (int i = 0; i < table->size; i++) {
         free_list(buckets[i]);
-    free(buckets);
+    }
 }
 
 void free_map(HashMap* map) {
@@ -179,16 +183,16 @@ void del(HashMap* table, int keyLen, char* key) {
                 prev->next = item->next;
             }
             item->next = NULL;
-            free_list(item);
+            free_entry(item->entry);
+            item->entry = NULL;
+            free(item);
             table->count--;
-            return;
-        }
-        if (item == NULL) {
-            return;
+            break;
         }
         prev = item;
         item = item->next;
     }
+    //printf("DEL: %d\n", table->entries[index] == NULL);
     return;
 }
 
@@ -196,6 +200,7 @@ Value* get(HashMap* table, int keyLen, char* key) {
     unsigned long index = hash(table->size, keyLen, key);
     LinkedEntries* item = table->entries[index];
     while (item != NULL) {
+        //printf("%s\n", key == NULL);
         if (compare(item->entry->key->keySize, item->entry->key->key, keyLen, key) == 0) {
             return item->entry->value;
         }
