@@ -6,7 +6,7 @@ make:
 	gcc src/persist.c -c -o persist.o
 	gcc jumbo.o map.o trie.o persist.o -o jumbo
 
-checks:
+check:
 	gcc test/check_trie.c -c -o check_trie.o
 	gcc test/check_map.c -c -o check_map.o
 	gcc test/check_persist.c -c -o check_persist.o
