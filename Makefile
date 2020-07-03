@@ -9,7 +9,8 @@ make:
 checks:
 	gcc test/check_trie.c -c -o check_trie.o
 	gcc test/check_map.c -c -o check_map.o
-	gcc trie.o map.o check_trie.o check_map.o -o test_suite `pkg-config --cflags --libs check`
+	gcc test/check_persist.c -c -o check_persist.o
+	gcc trie.o map.o persist.o check_trie.o check_map.o check_persist.o -o test_suite `pkg-config --cflags --libs check`
 	./test_suite
 
 clean:

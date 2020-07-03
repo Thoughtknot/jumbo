@@ -62,27 +62,3 @@ char* getVal(Node* trie, int keyLen, char* key) {
     }
     return temp->value;
 }
-/*
-int main() {
-    Node* root = createNode();
-    put(root, 4, "test", 2, "-1-");
-    put(root, 4, "team", 5, "-heal");
-    put(root, 4, "test", 2, "99");
-    put(root, 5, "roast", 2, "RsR");
-    delete(root, 4, "team");
-    char * val1 = get(root, 3, "tea");
-    char * val2 = get(root, 4, "team");
-    char * val3 = get(root, 4, "test");
-    char * valr = get(root, 5, "roast");
-    printf("Val: %s\n", val1);
-    printf("Val: %s\n", val2);
-    printf("Val: %s\n", val3);
-    printf("Val: %s\n", valr);
-    
-    put(root, 3, "tea", 2, "44");
-    char * val4 = get(root, 3, "tea");
-    printf("Val: %s\n", val4);
-
-    free_node(root);
-}
-*/

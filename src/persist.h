@@ -11,9 +11,11 @@ struct Object {
 
 typedef struct Persist Persist;
 struct Persist {
-    FILE *fp;
+    FILE* fp;
+    char* name;
 };
 
+void remove_free_persist(Persist* p);
 void free_persist(Persist* p);
 void free_object(Object* o);
 

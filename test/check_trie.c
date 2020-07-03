@@ -1,6 +1,7 @@
 #include <check.h>
 #include "../src/trie.h"
 #include "check_map.c"
+#include "check_persist.c"
 
 START_TEST (test_trie_basic)
 {
@@ -43,6 +44,7 @@ Suite * suite(void)
 
     tcase_add_test(tc_core, test_trie_basic);
     tcase_add_test(tc_core, test_map_basic);
+    tcase_add_test(tc_core, test_persist_basic);
     suite_add_tcase(s, tc_core);
 
     return s;

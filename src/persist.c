@@ -1,7 +1,13 @@
 #include "persist.h"
 
+void remove_free_persist(Persist* p) {
+    remove(p->name);
+    free_persist(p);
+}
+
 void free_persist(Persist* p) {
     fclose(p->fp);
+    free(p->name);
     free(p);
 }
 
@@ -18,6 +24,8 @@ Persist* create(char * path, bool create) {
     else {
         p->fp = fopen(path, "a+b");
     }
+    p->name = (char*) malloc(strlen(path));
+    strcpy(p->name, path);
     return p;
 }
 
@@ -42,27 +50,3 @@ Object* load(Persist* persist) {
     }
     return val;
 }
-/*
-int main() {
-    Persist* p = create("tst.file", true);
-    persist(p, 2, "Hi");
-    persist(p, 3, "Boo");
-    persist(p, 3, "Cow");
-    destroy(p);
-    
-    Persist* q = create("tst.file", false);
-    Object* val1 = load(q);
-    Object* val2 = load(q);
-    Object* val3 = load(q);
-    printf("Val: %d, %s\n", val1->size, val1->bytes);
-    printf("Val: %d, %s\n", val2->size, val2->bytes);
-    printf("Val: %d, %s\n", val3->size, val3->bytes);
-    free(val1->bytes);
-    free(val2->bytes);
-    free(val3->bytes);
-    free(val1);
-    free(val2);
-    free(val3);
-    destroy(q);
-}
-*/

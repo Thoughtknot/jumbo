@@ -211,19 +211,3 @@ Value* get(HashMap* table, int keyLen, char* key) {
     }
     return NULL;
 }
-
-/*
-int main() {
-    HashMap* map = create_map(5);
-    put(map, 6, "enerie", 4, "barn");
-    put(map, 3, "coafaefa", 6, "helloz");
-    put(map, 3, "Hel", 3, "foo");
-    put(map, 3, "Cau", 3, "boo");
-    printf("get(enerie): %d, %s\n", (int) hash(10, 6,"enerie"), get(map, 6, "enerie")->value);
-    printf("get(too): %d, %s\n", (int) hash(10, 3,"too"), get(map, 3, "too"));
-    printf("get(Hel): %d, %s\n", (int) hash(10, 3,"Hel"), get(map, 3, "Hel")->value);
-    printf("get(Cau): %d, %s\n", (int) hash(10, 3,"Cau"), get(map, 3, "Cau")->value);
-    
-    free_map(map);
-}
-*/
