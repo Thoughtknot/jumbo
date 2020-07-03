@@ -1,5 +1,4 @@
 #include "trie.h"
-#define MIN(a,b) ((a) < (b) ? (a) : (b))
 
 void free_node(Node* node) {
     if (node == NULL) {

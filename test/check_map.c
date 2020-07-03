@@ -27,6 +27,13 @@ START_TEST (test_map_basic)
     ck_assert(val5 == NULL);
     ck_assert(memcmp(val6->value, "45", val6->valueSize) == 0);
 
+    Key** k = keys(root, 10);
+    ck_assert(k != NULL);
+    ck_assert(memcmp(k[0]->key, "test", k[0]->keySize) == 0);
+    ck_assert(memcmp(k[1]->key, "tea", k[1]->keySize) == 0);
+    ck_assert(memcmp(k[2]->key, "roast", k[2]->keySize) == 0);
+    free(k);
+
     free_map(root);
 }
 END_TEST

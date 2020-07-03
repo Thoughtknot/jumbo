@@ -1,5 +1,7 @@
 #ifndef common_h
 #define common_h
+#define MIN(a,b) ((a) < (b) ? (a) : (b))
+
 typedef struct Key Key;
  
 struct Key {

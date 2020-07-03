@@ -105,6 +105,19 @@ int compare(int aLen, char * a, int bLen, char * b) {
     return 0;
 }
 
+Key** keys(HashMap* map, int limit) {
+    Key** keys = (Key**) calloc(MIN(limit, map->size), sizeof(Key*));
+    int idx = 0;
+    for (int i = 0; i < map->size; i++) {
+        LinkedEntries* entry = map->entries[i];
+        while (entry) {
+            keys[idx++] = entry->entry->key;
+            entry = entry->next;
+        }
+    }
+    return keys;
+}
+
 void handle_collision(HashMap* table, int index, KeyValue* entry) {
     LinkedEntries* head = table->entries[index];
     table->entries[index] = insert(head, entry);
