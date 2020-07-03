@@ -3,23 +3,10 @@
 #include <stdio.h> 
 #include <stdlib.h> 
 #include <string.h>
-
-typedef struct Key Key;
- 
-struct Key {
-    int keySize;
-    char* key;
-};
-
-typedef struct Value Value;
- 
-struct Value {
-    int valueSize;
-    char* value;
-};
+#include "common.h"
 
 typedef struct KeyValue KeyValue;
- 
+
 struct KeyValue {
     Key* key;
     Value* value;

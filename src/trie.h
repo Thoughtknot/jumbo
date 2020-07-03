@@ -2,13 +2,13 @@
 #include <stdlib.h> 
 #include <string.h>
 #include <stdbool.h>
+#include "common.h"
 
 #define CHARSIZE 256
 typedef struct Node Node;
 
-struct Node { 
-    int valLen;
-	char* value;
+struct Node {
+    Value* value;
     Node* children[CHARSIZE];
     //Node * parent;
 };
@@ -17,4 +17,4 @@ Node* createNode();
 void free_node(Node* node);
 void putVal(Node* trie, int keyLen, char* key, int valLen, char* val);
 void delVal(Node* trie, int keyLen, char* key);
-char* getVal(Node* trie, int keyLen, char* key);
+Value* getVal(Node* trie, int keyLen, char* key);

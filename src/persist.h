@@ -2,12 +2,7 @@
 #include <stdlib.h> 
 #include <string.h>
 #include <stdbool.h>
-typedef struct Object Object;
- 
-struct Object {
-    int size;
-    char* bytes;
-};
+#include "common.h"
 
 typedef struct Persist Persist;
 struct Persist {

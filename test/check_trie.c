@@ -11,23 +11,23 @@ START_TEST (test_trie_basic)
     putVal(root, 4, "test", 2, "99");
     putVal(root, 5, "roast", 2, "RsR");
     delVal(root, 4, "team");
-    char * val1 = getVal(root, 3, "tea");
-    char * val2 = getVal(root, 4, "team");
-    char * val3 = getVal(root, 4, "test");
-    char * val4 = getVal(root, 5, "roast");
+    Value * val1 = getVal(root, 3, "tea");
+    Value * val2 = getVal(root, 4, "team");
+    Value * val3 = getVal(root, 4, "test");
+    Value * val4 = getVal(root, 5, "roast");
 
     delVal(root, 4, "team");
-    char * val5 = getVal(root, 4, "team");
+    Value * val5 = getVal(root, 4, "team");
 
     putVal(root, 3, "tea", 2, "45");
-    char * val6 = getVal(root, 3, "tea");
+    Value * val6 = getVal(root, 3, "tea");
 
     ck_assert(val1 == NULL);
     ck_assert(val2 == NULL);
-    ck_assert_str_eq(val3, "99");
-    ck_assert_str_eq(val4, "Rs");
+    ck_assert_str_eq(val3->value, "99");
+    ck_assert_str_eq(val4->value, "Rs");
     ck_assert(val5 == NULL);
-    ck_assert_str_eq(val6, "45");
+    ck_assert_str_eq(val6->value, "45");
     free_node(root);
 }
 END_TEST
