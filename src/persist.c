@@ -16,13 +16,17 @@ void free_object(Object* o) {
     free(o);
 }
 
-Persist* create(char * path, bool create) {
+Persist* create_persist(char * path, bool create) {
     Persist* p = (Persist*) malloc(sizeof(Persist));
     if (create) {
         p->fp = fopen(path, "w+b");
     }
     else {
         p->fp = fopen(path, "a+b");
+    }
+    if(ferror(p->fp)){
+        perror(__func__);
+        exit(EXIT_FAILURE);
     }
     p->name = (char*) malloc(strlen(path));
     strcpy(p->name, path);
@@ -41,7 +45,7 @@ void persist(Persist* persist, int size, char* bytes) {
 
 Object* load(Persist* persist) {
     Object * val = (Object *) malloc(sizeof(Object));
-    int result = fread(&val->size, sizeof(int), 1, persist->fp);
+    fread(&val->size, sizeof(int), 1, persist->fp);
     val->bytes = (char*) malloc(val->size);
     fread(val->bytes, 1, val->size, persist->fp);
     if(ferror(persist->fp)){

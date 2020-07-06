@@ -22,6 +22,7 @@ struct Trie {
 
 Trie* createTrie();
 void free_trie(Trie* node);
+void free_value(Value* value);
 
 void putVal(Trie* trie, int keyLen, char* key, int valLen, char* val);
 void delVal(Trie* trie, int keyLen, char* key);

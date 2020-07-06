@@ -106,7 +106,7 @@ int compare(int aLen, char * a, int bLen, char * b) {
 }
 
 Key** keys(HashMap* map, int limit) {
-    Key** keys = (Key**) calloc(MIN(limit, map->size), sizeof(Key*));
+    Key** keys = (Key**) calloc(MIN(limit, map->count), sizeof(Key*));
     int idx = 0;
     for (int i = 0; i < map->size; i++) {
         LinkedEntries* entry = map->entries[i];
@@ -151,7 +151,7 @@ void free_list(LinkedEntries* list) {
     LinkedEntries* temp = list;
     while (temp) {
         free_entry(temp->entry);
-        temp->entry == NULL;
+        temp->entry = NULL;
         free(temp);
         temp = temp->next;
     }
