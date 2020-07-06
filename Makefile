@@ -1,11 +1,11 @@
 make:
 	mkdir -p db
-	gcc src/client.c -c -o client.o
-	gcc src/map.c -c -o map.o
-	gcc src/trie.c -c -o trie.o
-	gcc src/jumbo.c -c -o jumbo.o
-	gcc src/persist.c -c -o persist.o
-	gcc -pthread jumbo.o client.o map.o trie.o persist.o -o jumbo
+	gcc -Wall src/client.c -c -o client.o
+	gcc -Wall src/map.c -c -o map.o
+	gcc -Wall src/trie.c -c -o trie.o
+	gcc -Wall src/jumbo.c -c -o jumbo.o
+	gcc -Wall src/persist.c -c -o persist.o
+	gcc -pthread -Wall jumbo.o client.o map.o trie.o persist.o -o jumbo
 
 check:
 	gcc test/check_trie.c -c -o check_trie.o

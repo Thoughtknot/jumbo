@@ -45,7 +45,7 @@ void persist(Persist* persist, int size, char* bytes) {
 
 Object* load(Persist* persist) {
     Object * val = (Object *) malloc(sizeof(Object));
-    int result = fread(&val->size, sizeof(int), 1, persist->fp);
+    fread(&val->size, sizeof(int), 1, persist->fp);
     val->bytes = (char*) malloc(val->size);
     fread(val->bytes, 1, val->size, persist->fp);
     if(ferror(persist->fp)){

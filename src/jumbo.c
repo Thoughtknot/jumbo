@@ -83,8 +83,8 @@ void free_maps(PersistedMap** map) {
 // Driver function 
 int main(int argc,char *aa[]) 
 { 
-    int sockfd, connfd, len; 
-    sockaddr_in servaddr, cli; 
+    unsigned int sockfd, connfd, len; 
+    sockaddr_in servaddr; 
   
     sockfd = socket(AF_INET, SOCK_STREAM, 0); 
     if (sockfd == -1) { 
@@ -114,12 +114,13 @@ int main(int argc,char *aa[])
     } 
     else
         printf("Server listening.\n"); 
-    len = sizeof(cli); 
+    len = sizeof(sockaddr_in); 
   
-    init_mutex();
+    init_mutex(SIZE);
     pthread_t tid[MAX_CONNECTIONS];
     int i = 0;
     while (i < MAX_CONNECTIONS) {
+        sockaddr_in cli;
         connfd = accept(sockfd, (sockaddr*)&cli, &len); 
         if (connfd < 0) { 
             printf("Server accept failed.\n"); 
@@ -132,14 +133,13 @@ int main(int argc,char *aa[])
         client->mapsize = SIZE;
         client->pm = pm;
 
-        //pthread_create(&tid[i], NULL, handle_client_socket, (void *)client);
-        handle_client_socket((void *) client);
+        pthread_create(&tid[i], NULL, handle_client_socket, (void *)client);
         i++;
     }
     for (int i = 0; i < MAX_CONNECTIONS; i++) {
         pthread_join(tid[i], NULL);
     }
-    deinit_mutex();
+    deinit_mutex(SIZE);
     free_maps(pm);
     close(sockfd); 
 }

@@ -1,6 +1,6 @@
 #include "client.h"
 
-pthread_mutex_t lock; 
+pthread_mutex_t * lock = NULL; 
 
 int sendBytes(int sockfd, char * val, int len) {
     int result = send(sockfd, val, len, 0);
@@ -37,7 +37,7 @@ int readInt(int sockfd) {
 
 char readChar(int sockfd) {
     char chars[1];
-    int result = recv(sockfd, chars, 1, 0);
+    recv(sockfd, chars, 1, 0);
     return chars[0];
 }
 
@@ -59,12 +59,17 @@ PersistedMap* getTable(int table, PersistedMap** pm, int mapsize) {
     return pm[table];
 }
 
-void init_mutex() {
-    pthread_mutex_init(&lock, NULL);
+void init_mutex(int size) {
+    lock = (pthread_mutex_t *) malloc(size * sizeof(pthread_mutex_t));
+    for (int i = 0; i < size; i++) {
+        pthread_mutex_init(&lock[i], NULL);
+    }
 }
 
-void deinit_mutex() {
-    pthread_mutex_destroy(&lock);
+void deinit_mutex(int size) {
+    for (int i = 0; i < size; i++) {
+        pthread_mutex_destroy(&lock[i]);
+    }
 }
 void *handle_client_socket(void * args) {
     int sockfd = ((client_args*) args)->socketfd;
@@ -75,9 +80,8 @@ void *handle_client_socket(void * args) {
         if (operation == PUT) {
             int table = readInt(sockfd);
 
-            pthread_mutex_lock(&lock); 
+            pthread_mutex_lock(&lock[table]); 
             PersistedMap* map = getTable(table, pm, mapsize);
-            pthread_mutex_unlock(&lock); 
             
             int keyLen = readInt(sockfd);
             char* key = readBytes(sockfd, keyLen);
@@ -85,11 +89,10 @@ void *handle_client_socket(void * args) {
             char* value = readBytes(sockfd, valueLen);
             printf("PUT - table: %d, key: %s, value: %s\n", table, key, value); 
             
-            pthread_mutex_lock(&lock); 
             persist(map->persist, keyLen, key);
             persist(map->persist, valueLen, value);
             put(map->map, keyLen, key, valueLen, value);
-            pthread_mutex_unlock(&lock); 
+            pthread_mutex_unlock(&lock[table]); 
 
             free(key);
             free(value);
@@ -97,16 +100,14 @@ void *handle_client_socket(void * args) {
         else if (operation == GET) {
             int table = readInt(sockfd);
             
-            pthread_mutex_lock(&lock); 
+            pthread_mutex_lock(&lock[table]); 
             PersistedMap* map = getTable(table, pm, mapsize);
-            pthread_mutex_unlock(&lock); 
 
             int keyLen = readInt(sockfd);
             char* key = readBytes(sockfd, keyLen);
 
-            pthread_mutex_lock(&lock); 
             Value* val = get(map->map, keyLen, key);
-            pthread_mutex_unlock(&lock); 
+            pthread_mutex_unlock(&lock[table]); 
             if (val == NULL) {
                 printf("GET: - table: %d, key: %s, value: (null)\n", table, key);
                 sendInt(sockfd, -1); 
@@ -120,16 +121,14 @@ void *handle_client_socket(void * args) {
         }
         else if (operation == DEL) {
             int table = readInt(sockfd);
-            pthread_mutex_lock(&lock); 
+            pthread_mutex_lock(&lock[table]); 
             PersistedMap* map = getTable(table, pm, mapsize);
-            pthread_mutex_unlock(&lock); 
 
             int keyLen = readInt(sockfd);
             char* key = readBytes(sockfd, keyLen);
 
-            pthread_mutex_lock(&lock); 
             del(map->map, keyLen, key);
-            pthread_mutex_unlock(&lock); 
+            pthread_mutex_unlock(&lock[table]); 
 
             printf("DEL: - table: %d, key: %s\n", table, key);
             free(key);
@@ -137,17 +136,15 @@ void *handle_client_socket(void * args) {
         else if (operation == KEYS) {
             int table = readInt(sockfd);
 
-            pthread_mutex_lock(&lock); 
+            pthread_mutex_lock(&lock[table]); 
             PersistedMap* map = getTable(table, pm, mapsize);
-            pthread_mutex_unlock(&lock); 
 
             int limit = readInt(sockfd);
 
-            pthread_mutex_lock(&lock); 
             Key** key = keys(map->map, limit);
-            pthread_mutex_unlock(&lock); 
+            pthread_mutex_unlock(&lock[table]); 
             
-            int no_responses = MIN(map->mapsize, limit);
+            int no_responses = MIN(map->map->count, limit);
             printf("KEYS: - table: %d, no_responses: %d\n", table, no_responses);
             sendInt(sockfd, no_responses);
             for (int i = 0; i < no_responses; i++) {
