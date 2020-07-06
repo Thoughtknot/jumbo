@@ -151,7 +151,7 @@ void free_list(LinkedEntries* list) {
     LinkedEntries* temp = list;
     while (temp) {
         free_entry(temp->entry);
-        temp->entry == NULL;
+        temp->entry = NULL;
         free(temp);
         temp = temp->next;
     }

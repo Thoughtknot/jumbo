@@ -16,7 +16,7 @@ void free_object(Object* o) {
     free(o);
 }
 
-Persist* create(char * path, bool create) {
+Persist* create_persist(char * path, bool create) {
     Persist* p = (Persist*) malloc(sizeof(Persist));
     if (create) {
         printf("Opening a %s\n", path);

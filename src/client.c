@@ -54,7 +54,7 @@ PersistedMap* getTable(int table, PersistedMap** pm, int mapsize) {
         sprintf(prefix, "%d", table);
         strcat(filename, prefix);
         strcat(filename, ".jmb");
-        pm[table]->persist = create(filename, true);
+        pm[table]->persist = create_persist(filename, true);
     }
     return pm[table];
 }

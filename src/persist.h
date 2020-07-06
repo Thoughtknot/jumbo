@@ -8,7 +8,7 @@ void remove_free_persist(Persist* p);
 void free_persist(Persist* p);
 void free_object(Object* o);
 
-Persist* create(char * path, bool create);
+Persist* create_persist(char * path, bool create);
 
 void persist(Persist* persist, int size, char* bytes);
 

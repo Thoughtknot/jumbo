@@ -1,6 +1,9 @@
 
 #include <pthread.h>
 #include <unistd.h> 
+#include <netinet/in.h> 
+#include <sys/socket.h> 
+#include <sys/types.h> 
 #include "common.h"
 #include "map.h"
 #define PUT 11

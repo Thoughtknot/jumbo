@@ -57,7 +57,7 @@ PersistedMap** build_maps() {
                 if (seq != NULL) {
                     int mapNo = atoi(seq);
                     persistedMaps[mapNo] = (PersistedMap*) malloc(sizeof(PersistedMap));
-                    persistedMaps[mapNo]->persist = create(v, false);
+                    persistedMaps[mapNo]->persist = create_persist(v, false);
                     persistedMaps[mapNo]->map = create_map(SIZE);
                     persistedMaps[mapNo]->mapsize = SIZE;
                     int loadedRecords = load_maps(persistedMaps[mapNo]);
