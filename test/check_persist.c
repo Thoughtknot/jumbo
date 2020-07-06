@@ -3,13 +3,13 @@
 
 START_TEST (test_persist_basic)
 {
-    Persist* p = create("tst.file", true);
+    Persist* p = create_persist("tst.file", true);
     persist(p, 2, "Hi");
     persist(p, 3, "Boo");
     persist(p, 3, "Cow");
     free_persist(p);
     
-    Persist* q = create("tst.file", false);
+    Persist* q = create_persist("tst.file", false);
     Object* val1 = load(q);
     Object* val2 = load(q);
     Object* val3 = load(q);

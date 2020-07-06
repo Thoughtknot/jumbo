@@ -86,19 +86,13 @@ void *handle_client_socket(void * args) {
             printf("PUT - table: %d, key: %s, value: %s\n", table, key, value); 
             
             pthread_mutex_lock(&lock); 
-            printf("a\n");
             persist(map->persist, keyLen, key);
-            printf("b\n");
             persist(map->persist, valueLen, value);
-            printf("c\n");
             put(map->map, keyLen, key, valueLen, value);
-            printf("d\n");
             pthread_mutex_unlock(&lock); 
-            printf("e\n");
 
             free(key);
             free(value);
-            printf("f\n");
         }
         else if (operation == GET) {
             int table = readInt(sockfd);
