@@ -89,12 +89,6 @@ Value* getVal(Trie* trie, int keyLen, char* key) {
     return temp->value;
 }
 
-Key** getKeys(Trie* trie, int limit) {
-    Key** keys = (Key**) calloc(MIN(limit, trie->size), sizeof(Key*));
-    get_node_keys(keys, trie->root, "", 0, 0);
-    return keys;
-}
-
 int get_node_keys(Key** key_aggregator, Node* root_node, char * path, int length, int count) {
     int newcount = count;
     if (root_node->value) {
@@ -113,4 +107,11 @@ int get_node_keys(Key** key_aggregator, Node* root_node, char * path, int length
         }
     }
     return newcount;
+}
+
+Key** getKeys(Trie* trie, int limit) {
+    Key** keys = (Key**) calloc(MIN(limit, trie->size), sizeof(Key*));
+
+    get_node_keys(keys, trie->root, "", 0, 0);
+    return keys;
 }

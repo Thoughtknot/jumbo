@@ -63,6 +63,7 @@ struct PersistedMap {
 
 typedef struct client_args client_args;
 struct client_args {
+    
     PersistedMap** pm;
     int socketfd;
     int mapsize;

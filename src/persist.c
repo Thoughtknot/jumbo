@@ -19,11 +19,9 @@ void free_object(Object* o) {
 Persist* create_persist(char * path, bool create) {
     Persist* p = (Persist*) malloc(sizeof(Persist));
     if (create) {
-        printf("Opening a %s\n", path);
         p->fp = fopen(path, "w+b");
     }
     else {
-        printf("Opening b %s\n", path);
         p->fp = fopen(path, "a+b");
     }
     if(ferror(p->fp)){
@@ -36,14 +34,9 @@ Persist* create_persist(char * path, bool create) {
 }
 
 void persist(Persist* persist, int size, char* bytes) {
-    printf("persista, %d\n", persist == NULL);
-    printf("persista, %d\n", persist->fp == NULL);
     fwrite(&size, sizeof(int), 1, persist->fp);
-    printf("persistb\n");
     fwrite(bytes, 1, size, persist->fp);
-    printf("persistc\n");
     fflush(persist->fp);
-    printf("persistd\n");
     if(ferror(persist->fp)){
       perror(__func__);
       exit(EXIT_FAILURE);

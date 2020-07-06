@@ -48,7 +48,7 @@ PersistedMap* getTable(int table, PersistedMap** pm, int mapsize) {
         pm[table]->map = create_map(mapsize);
         pm[table]->persist = NULL;
 
-        char filename[50];
+        char * filename = (char*) malloc(50);
         strcpy(filename, "db/");
         char prefix[6]; 
         sprintf(prefix, "%d", table);
@@ -70,19 +70,13 @@ void *handle_client_socket(void * args) {
     int sockfd = ((client_args*) args)->socketfd;
     PersistedMap** pm = ((client_args*) args)->pm;
     int mapsize = ((client_args*) args)->mapsize;
-    printf("args: %d\n", args == NULL);
-    printf("pm: %d\n", pm == NULL);
     for (;;) {
         char operation = readChar(sockfd);
         if (operation == PUT) {
             int table = readInt(sockfd);
 
             pthread_mutex_lock(&lock); 
-            printf("a: pm[%d]: %d\n", table, pm[table] == NULL);
             PersistedMap* map = getTable(table, pm, mapsize);
-            printf("b: pm[%d]: %d\n", table, map == NULL);
-            printf("b: pm[%d]: %d\n", table, map->persist == NULL);
-            printf("b: pm[%d]: %d\n", table, map->persist->fp == NULL);
             pthread_mutex_unlock(&lock); 
             
             int keyLen = readInt(sockfd);

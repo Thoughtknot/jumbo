@@ -5,6 +5,7 @@
 #include <sys/socket.h> 
 #include <sys/types.h> 
 #include "common.h"
+#include "persist.h"
 #include "map.h"
 #define PUT 11
 #define GET 21
