@@ -1,3 +1,5 @@
 *.o
 jumbo
 test_suite
+db/
+.vscode
