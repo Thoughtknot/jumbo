@@ -82,3 +82,32 @@ JNIEXPORT jbyteArray JNICALL Java_org_jumbo_JumboJni_get(JNIEnv * env, jobject o
     (*env)->SetByteArrayRegion(env, array, 0, val->valueSize, val->value);
     return array;
 }
+
+JNIEXPORT void JNICALL Java_org_jumbo_JumboJni_del(JNIEnv * env, jobject obj, jint table, jbyteArray key) {
+    jfieldID ptr = get_state_pointer_field(env, obj);
+    State* state = (State*) (*env)->GetLongField(env, obj, ptr);
+    PersistedMap* map = getTable(table, state->map, state->size);
+    int keyLen = (*env)->GetArrayLength(env, key);
+    char keyBuf[keyLen];
+    (*env)->GetByteArrayRegion(env, key, 0, keyLen, keyBuf);
+    del(map->map, keyLen, keyBuf);
+}
+
+JNIEXPORT jobjectArray JNICALL Java_org_jumbo_JumboJni_keys(JNIEnv * env, jobject obj, jint table, jint limit) {
+    jfieldID ptr = get_state_pointer_field(env, obj);
+    State* state = (State*) (*env)->GetLongField(env, obj, ptr);
+    PersistedMap* map = getTable(table, state->map, state->size);
+
+    Key** key = keys(map->map, limit);
+    int no_responses = MIN(map->map->count, limit);
+
+    jclass byteArrayClass = (*env)->FindClass(env,"[B");
+    jobjectArray array = (*env)->NewObjectArray(env, no_responses, byteArrayClass, NULL);
+
+    for (int i = 0; i < no_responses; i++) {
+        jbyteArray val = (*env)->NewByteArray(env, key[i]->keySize);
+        (*env)->SetByteArrayRegion(env, val, 0, key[i]->keySize, key[i]->key);
+        (*env)->SetObjectArrayElement(env, array, i, val); 
+    }
+    return array;
+}
