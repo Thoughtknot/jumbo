@@ -59,6 +59,12 @@ PersistedMap* getTable(int table, PersistedMap** pm, int mapsize) {
     return pm[table];
 }
 
+void persist_and_put(PersistedMap* map, int keyLen, char* key, int valueLen, char* value) {
+    persist(map->persist, keyLen, key);
+    persist(map->persist, valueLen, value);
+    put(map->map, keyLen, key, valueLen, value);
+}
+
 void init_mutex(int size) {
     lock = (pthread_mutex_t *) malloc(size * sizeof(pthread_mutex_t));
     for (int i = 0; i < size; i++) {
@@ -71,6 +77,8 @@ void deinit_mutex(int size) {
         pthread_mutex_destroy(&lock[i]);
     }
 }
+
+
 void *handle_client_socket(void * args) {
     int sockfd = ((client_args*) args)->socketfd;
     PersistedMap** pm = ((client_args*) args)->pm;
@@ -88,10 +96,8 @@ void *handle_client_socket(void * args) {
             int valueLen = readInt(sockfd);
             char* value = readBytes(sockfd, valueLen);
             printf("PUT - table: %d, key: %s, value: %s\n", table, key, value); 
+            persist_and_put(map, keyLen, key, valueLen, value);
             
-            persist(map->persist, keyLen, key);
-            persist(map->persist, valueLen, value);
-            put(map->map, keyLen, key, valueLen, value);
             pthread_mutex_unlock(&lock[table]); 
 
             free(key);

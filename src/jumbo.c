@@ -133,7 +133,7 @@ int main(int argc,char *aa[])
         client->mapsize = SIZE;
         client->pm = pm;
 
-        pthread_create(&tid[i], NULL, handle_client_socket, (void *)client);
+        pthread_create(&tid[i], NULL, handle_client_socket, (void*) client);
         i++;
     }
     for (int i = 0; i < MAX_CONNECTIONS; i++) {

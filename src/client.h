@@ -18,6 +18,8 @@ union char_int {
     int32_t num;
 };
 
-void init_mutex();
-void deinit_mutex();
+void init_mutex(int size);
+void deinit_mutex(int size);
 void *handle_client_socket(void * args);
+PersistedMap* getTable(int table, PersistedMap** pm, int mapsize);
+void persist_and_put(PersistedMap* map, int keyLen, char* key, int valueLen, char* val);
