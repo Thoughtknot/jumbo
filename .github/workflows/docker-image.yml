@@ -20,7 +20,7 @@ jobs:
       run: |
         version=`cat version.txt`
         echo ${GITHUB_TOKEN} | docker login docker.pkg.github.com -u Thoughtknot --password-stdin
-        docker tag jumbo:$(date +%s) docker.pkg.github.com/thoughtknot/jumbo/jumbo:${version}
+        docker tag jumbo:${version} docker.pkg.github.com/thoughtknot/jumbo/jumbo:${version}
         docker push docker.pkg.github.com/thoughtknot/jumbo/jumbo:${version}
       env:
         GITHUB_TOKEN: ${{ github.token }}
