@@ -37,3 +37,39 @@ START_TEST (test_map_basic)
     free_map(root);
 }
 END_TEST
+
+START_TEST (test_map_unorthodox)
+{
+    HashMap* root = create_map(1024);
+    char f[] = {50};
+    char g[] = {50};
+    char a[] = {57, 57};
+    char b[] = {57, 57};
+    char c[] = {49, 49, 48};
+    char d[] = {49, 49, 48};
+    put(root, 1, f, 1, g);
+    put(root, 2, a, 2, b);
+    put(root, 3, c, 3, d);
+    Value* val = get(root, 2, b);
+    ck_assert(val != NULL);
+    ck_assert(memcmp(val->value, "99", 2) == 0);
+
+    free_map(root);
+}
+END_TEST
+
+START_TEST (test_map_resize)
+{
+    HashMap* root = create_map(3);
+    put(root, 1, "a", 1, "g");
+    put(root, 1, "b", 1, "g");
+    put(root, 1, "c", 1, "g");
+    root = resize(root);
+    put(root, 1, "d", 1, "g");
+    put(root, 1, "e", 1, "g");
+    ck_assert_int_eq(root->count, 5);
+    ck_assert_int_eq(root->size, 12);
+
+    free_map(root);
+}
+END_TEST

@@ -26,9 +26,8 @@ LinkedEntries* insert(LinkedEntries* list, KeyValue* entry) {
         list->next = node;
         return list;
     }
-
     LinkedEntries* entries = list;
-    while (entries->next->next) {
+    while (entries->next) {
         entries = entries->next;
     }
 
@@ -123,13 +122,26 @@ void handle_collision(HashMap* table, int index, KeyValue* entry) {
     table->entries[index] = insert(head, entry);
 }
 
+HashMap* resize(HashMap* original) {
+    int newSize = original->size << 2;
+    HashMap* map = create_map(newSize);
+    Key** ks = keys(original, original->size);
+    int no_keys = MIN(original->size, original->count);
+    for (int i = 0; i < no_keys; i++) {
+        Value* val = get(original,  ks[i]->keySize, ks[i]->key);
+        put(map, ks[i]->keySize, ks[i]->key, val->valueSize, val->value);
+    }
+    free(ks);
+    free_map(original);
+    return map;
+}
+
 void put(HashMap* table, int keyLen, char* key, int valLen, char* value) {
     KeyValue* item = create_entry(keyLen, key, valLen, value);
     unsigned long h = hash(table->size, keyLen, key);
     LinkedEntries* current = table->entries[h];
     if (current == NULL) {
         if (table->count == table->size) {
-            printf("Hash map full. TODO: resize!\n");
             free_entry(item);
             return;
         }
@@ -150,10 +162,11 @@ void put(HashMap* table, int keyLen, char* key, int valLen, char* value) {
 void free_list(LinkedEntries* list) {
     LinkedEntries* temp = list;
     while (temp) {
-        free_entry(temp->entry);
-        temp->entry = NULL;
-        free(temp);
+        LinkedEntries* toFree = temp;
         temp = temp->next;
+        free_entry(toFree->entry);
+        toFree->entry = NULL;
+        free(toFree);
     }
 }
 
@@ -211,6 +224,7 @@ void del(HashMap* table, int keyLen, char* key) {
 
 Value* get(HashMap* table, int keyLen, char* key) {
     unsigned long index = hash(table->size, keyLen, key);
+    //printf("hash %ld\n", index);
     LinkedEntries* item = table->entries[index];
     while (item != NULL) {
         //printf("%s\n", key == NULL);

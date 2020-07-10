@@ -13,11 +13,13 @@ START_TEST (test_client_basic)
         a[i][0] = i;
     }
 
+    /*
     clock_t start = clock(), diff;
     for (int i = 0; i < 10000; i++) {
         persist_and_put(pm, 1, a[i % 100], 13, "Hello world!");
     }
     diff = (double)(clock() - start) * 1000000 / CLOCKS_PER_SEC;
     printf("Clock: %ld\n", diff);
+    */
 }
 END_TEST

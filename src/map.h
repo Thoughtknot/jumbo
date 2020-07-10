@@ -13,4 +13,5 @@ Key** keys(HashMap* map, int limit);
 HashMap* create_map(int size);
 void free_entry(KeyValue* entry);
 void free_map(HashMap* map);
+HashMap* resize(HashMap* map);
 #endif

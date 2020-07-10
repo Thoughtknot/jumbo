@@ -63,6 +63,11 @@ void persist_and_put(PersistedMap* map, int keyLen, char* key, int valueLen, cha
     persist(map->persist, keyLen, key);
     persist(map->persist, valueLen, value);
     put(map->map, keyLen, key, valueLen, value);
+    printf("Resizing map.\n");
+    if (map->map->size <= map->map->count) {
+        map->map = resize(map->map);
+        map->mapsize = map->map->size;
+    }
 }
 
 void init_mutex(int size) {
@@ -77,7 +82,6 @@ void deinit_mutex(int size) {
         pthread_mutex_destroy(&lock[i]);
     }
 }
-
 
 void *handle_client_socket(void * args) {
     int sockfd = ((client_args*) args)->socketfd;

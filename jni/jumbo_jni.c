@@ -66,7 +66,13 @@ JNIEXPORT void JNICALL Java_org_jumbo_JumboJni_put(JNIEnv * env, jobject obj, ji
     int valLen = (*env)->GetArrayLength(env, value);
     signed char valBuf[valLen];
     (*env)->GetByteArrayRegion(env, value, 0, valLen, valBuf);
+    printf("PUT %s\n", keyBuf);
     persist_and_put(map, keyLen, keyBuf, valLen, valBuf);
+    printf("Resizing map.\n");
+    if (map->map->size <= map->map->count) {
+        map->map = resize(map->map);
+        map->mapsize = map->map->size;
+    }
 }
 
 JNIEXPORT jbyteArray JNICALL Java_org_jumbo_JumboJni_get(JNIEnv * env, jobject obj, jint table, jbyteArray key) {
@@ -74,12 +80,19 @@ JNIEXPORT jbyteArray JNICALL Java_org_jumbo_JumboJni_get(JNIEnv * env, jobject o
     State* state = (State*) (*env)->GetLongField(env, obj, ptr);
     PersistedMap* map = getTable(table, state->map, state->size);
     int keyLen = (*env)->GetArrayLength(env, key);
-    char keyBuf[keyLen];
+    signed char keyBuf[keyLen];
     (*env)->GetByteArrayRegion(env, key, 0, keyLen, keyBuf);
 
+    printf("GET %s\n", keyBuf);
     Value* val = get(map->map, keyLen, keyBuf);
-    jbyteArray array = (*env)->NewByteArray(env, val->valueSize);
-    (*env)->SetByteArrayRegion(env, array, 0, val->valueSize, val->value);
+    jbyteArray array;
+    if (val == NULL) {
+        array = (*env)->NewByteArray(env, 0);
+    }
+    else {
+        array = (*env)->NewByteArray(env, val->valueSize);
+        (*env)->SetByteArrayRegion(env, array, 0, val->valueSize, val->value);
+    }
     return array;
 }
 

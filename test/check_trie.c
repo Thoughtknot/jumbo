@@ -57,6 +57,8 @@ Suite * suite(void)
     tcase_add_test(tc_core, test_map_basic);
     tcase_add_test(tc_core, test_persist_basic);
     tcase_add_test(tc_core, test_client_basic);
+    tcase_add_test(tc_core, test_map_unorthodox);
+    tcase_add_test(tc_core, test_map_resize);
     suite_add_tcase(s, tc_core);
 
     return s;

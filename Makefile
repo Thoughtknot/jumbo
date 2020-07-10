@@ -14,6 +14,11 @@ jni:
 	gcc -fPIC src/persist.c -c -o libpersist.o
 	gcc -fPIC -I${JAVA_HOME}/include -I${JAVA_HOME}/include/linux -shared libmap.o libpersist.o -o libjumbo_jni.so jni/jumbo_jni.c
 
+leak:
+	gcc test/leak_check.c -c -o leak_check.o
+	gcc leak_check.o map.o -o leak_check
+	valgrind --tool=memcheck --leak-check=yes -v ./leak_check
+
 check:
 	gcc test/check_trie.c -c -o check_trie.o
 	gcc test/check_map.c -c -o check_map.o
@@ -23,5 +28,5 @@ check:
 	./test_suite
 
 clean:
-	rm *.o *.so jumbo test_suite
+	rm *.o *.so jumbo test_suite leak_check
 	rm -r db/
