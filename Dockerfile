@@ -1,7 +1,7 @@
 FROM alpine:3.7
-COPY src/ /usr/share/
+RUN apk add --update make
+COPY src/ /usr/share/src/
 COPY Makefile /usr/share/
-RUN ls /usr/share/
 WORKDIR /usr/share/
 RUN make
-RUN ls /usr/share/
+RUN ls -R /usr/share/
