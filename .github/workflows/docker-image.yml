@@ -18,6 +18,9 @@ jobs:
       run: docker build . --tag jumbo:$(date +%s)
     - name: Publish image
       run: |
-        cat ~/GH_TOKEN.txt | docker login docker.pkg.github.com -u Thoughtknot --password-stdin
+        echo ${GITHUB_TOKEN}
+        echo ${GITHUB_TOKEN} | docker login docker.pkg.github.com -u Thoughtknot --password-stdin
         docker tag jumbo:$(date +%s) docker.pkg.github.com/Thoughtknot/jumbo/jumbo:$(date +%s)
         docker push docker.pkg.github.com/Thoughtknot/jumbo/jumbo:$(date +%s)
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
