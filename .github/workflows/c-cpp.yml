@@ -14,6 +14,8 @@ jobs:
     steps:
     - name: install checks
       run: sudo apt-get install -y check
+    - name: install valgrind
+      run: sudo apt-get install -y valgrind
     - uses: actions/checkout@v2
     - name: make
       run: make
