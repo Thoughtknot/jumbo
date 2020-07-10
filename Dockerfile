@@ -4,4 +4,4 @@ COPY src/ /usr/share/src/
 COPY Makefile /usr/share/
 WORKDIR /usr/share/
 RUN make
-RUN ls -R /usr/share/
+ENTRYPOINT [ "jumbo" ]
