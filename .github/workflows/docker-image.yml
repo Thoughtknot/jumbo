@@ -9,18 +9,18 @@ on:
 jobs:
 
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Build the Docker image
-      run: docker build . --tag jumbo:$(date +%s)
+      run: |
+        version=`cat version.txt`
+        docker build . --tag jumbo:${version}
     - name: Publish image
       run: |
-        echo ${GITHUB_TOKEN}
+        version=`cat version.txt`
         echo ${GITHUB_TOKEN} | docker login docker.pkg.github.com -u Thoughtknot --password-stdin
-        docker tag jumbo:$(date +%s) docker.pkg.github.com/thoughtknot/jumbo/jumbo:$(date +%s)
-        docker push docker.pkg.github.com/thoughtknot/jumbo/jumbo:$(date +%s)
+        docker tag jumbo:$(date +%s) docker.pkg.github.com/thoughtknot/jumbo/jumbo:${version}
+        docker push docker.pkg.github.com/thoughtknot/jumbo/jumbo:${version}
       env:
         GITHUB_TOKEN: ${{ github.token }}
