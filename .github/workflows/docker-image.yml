@@ -16,3 +16,8 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build the Docker image
       run: docker build . --tag jumbo:$(date +%s)
+    - name: Publish image
+      run: |
+        cat ~/GH_TOKEN.txt | docker login docker.pkg.github.com -u Thoughtknot --password-stdin
+        docker tag jumbo:$(date +%s) docker.pkg.github.com/Thoughtknot/jumbo/jumbo:$(date +%s)
+        docker push docker.pkg.github.com/Thoughtknot/jumbo/jumbo:$(date +%s)
