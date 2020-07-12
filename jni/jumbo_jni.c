@@ -1,37 +1,12 @@
-#include "../src/persist.h"
-#include "../src/map.h"
-#include <sys/stat.h>
+#include "../src/persistedmap.h"
 #include "org_jumbo_JumboJni.h"
+#include <sys/stat.h>
 
 typedef struct State State;
 struct State {
     PersistedMap** map;
     int size;
 };
-
-PersistedMap* getTable(int table, PersistedMap** pm, int mapsize) {
-    if (pm[table] == NULL) {
-        pm[table] = (PersistedMap*) malloc(sizeof(PersistedMap));
-        pm[table]->mapsize = mapsize;
-        pm[table]->map = create_map(mapsize);
-        pm[table]->persist = NULL;
-
-        char * filename = (char*) malloc(50);
-        strcpy(filename, "db/");
-        char prefix[6]; 
-        sprintf(prefix, "%d", table);
-        strcat(filename, prefix);
-        strcat(filename, ".jmb");
-        pm[table]->persist = create_persist(filename, true);
-    }
-    return pm[table];
-}
-
-void persist_and_put(PersistedMap* map, int keyLen, char* key, int valueLen, char* value) {
-    persist(map->persist, keyLen, key);
-    persist(map->persist, valueLen, value);
-    put(map->map, keyLen, key, valueLen, value);
-}
 
 jfieldID get_state_pointer_field(JNIEnv* env, jobject obj) {
     jclass c = (*env)->GetObjectClass(env, obj);
@@ -47,10 +22,7 @@ JNIEXPORT void JNICALL Java_org_jumbo_JumboJni_init(JNIEnv * env, jobject obj, j
     }
 
     State* state = (State*) malloc(sizeof(State));
-    state->map = (PersistedMap**) calloc(size, sizeof(PersistedMap*));
-    for (int i = 0; i < size; i++) {
-        state->map[i] = NULL;
-    }
+    state->map = build_maps(size);
     state->size = size;
     jfieldID ptr = get_state_pointer_field(env, obj);
     (*env)->SetLongField(env, obj, ptr, state);
@@ -68,11 +40,6 @@ JNIEXPORT void JNICALL Java_org_jumbo_JumboJni_put(JNIEnv * env, jobject obj, ji
     (*env)->GetByteArrayRegion(env, value, 0, valLen, valBuf);
     printf("PUT %s\n", keyBuf);
     persist_and_put(map, keyLen, keyBuf, valLen, valBuf);
-    printf("Resizing map.\n");
-    if (map->map->size <= map->map->count) {
-        map->map = resize(map->map);
-        map->mapsize = map->map->size;
-    }
 }
 
 JNIEXPORT jbyteArray JNICALL Java_org_jumbo_JumboJni_get(JNIEnv * env, jobject obj, jint table, jbyteArray key) {

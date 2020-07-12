@@ -41,35 +41,6 @@ char readChar(int sockfd) {
     return chars[0];
 }
 
-PersistedMap* getTable(int table, PersistedMap** pm, int mapsize) {
-    if (pm[table] == NULL) {
-        pm[table] = (PersistedMap*) malloc(sizeof(PersistedMap));
-        pm[table]->mapsize = mapsize;
-        pm[table]->map = create_map(mapsize);
-        pm[table]->persist = NULL;
-
-        char * filename = (char*) malloc(50);
-        strcpy(filename, "db/");
-        char prefix[6]; 
-        sprintf(prefix, "%d", table);
-        strcat(filename, prefix);
-        strcat(filename, ".jmb");
-        pm[table]->persist = create_persist(filename, true);
-    }
-    return pm[table];
-}
-
-void persist_and_put(PersistedMap* map, int keyLen, char* key, int valueLen, char* value) {
-    persist(map->persist, keyLen, key);
-    persist(map->persist, valueLen, value);
-    put(map->map, keyLen, key, valueLen, value);
-    printf("Resizing map.\n");
-    if (map->map->size <= map->map->count) {
-        map->map = resize(map->map);
-        map->mapsize = map->map->size;
-    }
-}
-
 void init_mutex(int size) {
     lock = (pthread_mutex_t *) malloc(size * sizeof(pthread_mutex_t));
     for (int i = 0; i < size; i++) {
@@ -137,7 +108,7 @@ void *handle_client_socket(void * args) {
             int keyLen = readInt(sockfd);
             char* key = readBytes(sockfd, keyLen);
 
-            del(map->map, keyLen, key);
+            persist_and_del(map, keyLen, key);
             pthread_mutex_unlock(&lock[table]); 
 
             printf("DEL: - table: %d, key: %s\n", table, key);

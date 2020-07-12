@@ -33,7 +33,8 @@ Persist* create_persist(char * path, bool create) {
     return p;
 }
 
-void persist(Persist* persist, int size, char* bytes) {
+void persist(Persist* persist, int size, unsigned char operation, char* bytes) {
+    fwrite(&operation, 1, 1, persist->fp);
     fwrite(&size, sizeof(int), 1, persist->fp);
     fwrite(bytes, 1, size, persist->fp);
     fflush(persist->fp);
@@ -45,6 +46,7 @@ void persist(Persist* persist, int size, char* bytes) {
 
 Object* load(Persist* persist) {
     Object * val = (Object *) malloc(sizeof(Object));
+    fread(&val->operation, 1, 1, persist->fp);
     fread(&val->size, sizeof(int), 1, persist->fp);
     val->bytes = (char*) malloc(val->size);
     fread(val->bytes, 1, val->size, persist->fp);

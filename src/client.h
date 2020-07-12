@@ -7,10 +7,6 @@
 #include "common.h"
 #include "persist.h"
 #include "map.h"
-#define PUT 11
-#define GET 21
-#define DEL 31
-#define KEYS 41
 
 typedef union char_int char_int;
 union char_int {

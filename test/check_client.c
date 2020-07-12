@@ -1,6 +1,6 @@
 #include <check.h>
 #include <time.h>
-#include "../src/client.h"
+#include "../src/persistedmap.h"
 
 START_TEST (test_client_basic)
 {

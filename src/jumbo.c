@@ -1,14 +1,11 @@
 #include <stdio.h> 
 #include <stdlib.h> 
 #include <string.h> 
+#include "persistedmap.h"
 #include <netinet/in.h> 
 #include <sys/socket.h> 
 #include <sys/types.h> 
-#include <dirent.h>
 #include <pthread.h>
-#include <unistd.h> 
-#include "map.h"
-#include "persist.h"
 #include "client.h"
 
 #define PORT 8080 
@@ -17,68 +14,6 @@
 
 typedef struct sockaddr sockaddr;
 typedef struct sockaddr_in sockaddr_in;
-
-int load_maps(PersistedMap* pm) {
-    int i = 0;
-    while (true) {
-        Object* key = load(pm->persist);
-        Object* value = load(pm->persist);
-        if (!key || !value) {
-            if (value)
-                free_object(value);
-            break;
-        }
-        put(pm->map, key->size, key->bytes, value->size, value->bytes);
-        free_object(key);
-        free_object(value);
-        i++;
-    }
-    return i;
-}
-
-PersistedMap** build_maps() {
-    PersistedMap** persistedMaps = (PersistedMap**) calloc(SIZE, sizeof(PersistedMap*));
-    DIR *d;
-    struct dirent *dir;
-    d = opendir("db");
-    const char * s = ".jmb";
-    for (int i = 0; i < SIZE; i++) {
-        persistedMaps[i] = NULL;
-    }
-    if (d)
-    {
-        while ((dir = readdir(d)) != NULL)
-        {
-            char v[strlen(dir->d_name)];
-            strcpy(v, "db/");
-            strcat(v, dir->d_name);
-            if (strstr(dir->d_name, ".jmb")) {
-                char * seq = strtok(dir->d_name, s);
-                if (seq != NULL) {
-                    int mapNo = atoi(seq);
-                    persistedMaps[mapNo] = (PersistedMap*) malloc(sizeof(PersistedMap));
-                    persistedMaps[mapNo]->persist = create_persist(v, false);
-                    persistedMaps[mapNo]->map = create_map(SIZE);
-                    persistedMaps[mapNo]->mapsize = SIZE;
-                    int loadedRecords = load_maps(persistedMaps[mapNo]);
-                    printf("Loaded %d records as table %d from %s\n", loadedRecords, mapNo, v);
-                }
-            }
-        }
-        closedir(d);
-    }
-    return persistedMaps;
-}
-
-void free_maps(PersistedMap** map) {
-    for (int i = 0; i < SIZE; i++) {
-        if (!map[i])
-            continue;
-        free_map(map[i]->map);
-        free_persist(map[i]->persist);
-    }
-    free(map);
-}
 
 // Driver function 
 int main(int argc,char *aa[]) 
@@ -106,7 +41,7 @@ int main(int argc,char *aa[])
     else
         printf("Socket successfully bound.\n"); 
   
-    PersistedMap** pm = build_maps();
+    PersistedMap** pm = build_maps(SIZE);
 
     if ((listen(sockfd, 5)) != 0) { 
         printf("Listen failed.\n"); 
@@ -140,6 +75,6 @@ int main(int argc,char *aa[])
         pthread_join(tid[i], NULL);
     }
     deinit_mutex(SIZE);
-    free_maps(pm);
+    free_maps(pm, SIZE);
     close(sockfd); 
 }

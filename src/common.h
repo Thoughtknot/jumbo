@@ -7,6 +7,10 @@
 #ifndef common_h
 #define common_h
 #define MIN(a,b) ((a) < (b) ? (a) : (b))
+#define PUT 11
+#define GET 21
+#define DEL 31
+#define KEYS 41
 
 typedef struct Persist Persist;
 struct Persist {
@@ -44,6 +48,7 @@ struct LinkedEntries {
 typedef struct Object Object;
 struct Object {
     int size;
+    unsigned char operation;
     char* bytes;
 };
 

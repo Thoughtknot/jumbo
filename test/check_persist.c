@@ -4,9 +4,9 @@
 START_TEST (test_persist_basic)
 {
     Persist* p = create_persist("tst.file", true);
-    persist(p, 2, "Hi");
-    persist(p, 3, "Boo");
-    persist(p, 3, "Cow");
+    persist(p, 2, PUT, "Hi");
+    persist(p, 3, PUT, "Boo");
+    persist(p, 3, PUT, "Cow");
     free_persist(p);
     
     Persist* q = create_persist("tst.file", false);
