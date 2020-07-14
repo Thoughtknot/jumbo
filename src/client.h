@@ -5,8 +5,7 @@
 #include <sys/socket.h> 
 #include <sys/types.h> 
 #include "common.h"
-#include "persist.h"
-#include "map.h"
+#include "persistedmap.h"
 
 typedef union char_int char_int;
 union char_int {
@@ -16,6 +15,3 @@ union char_int {
 
 void init_mutex(int size);
 void deinit_mutex(int size);
-void *handle_client_socket(void * args);
-PersistedMap* getTable(int table, PersistedMap** pm, int mapsize);
-void persist_and_put(PersistedMap* map, int keyLen, char* key, int valueLen, char* val);

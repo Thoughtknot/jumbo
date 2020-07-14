@@ -1,10 +1,10 @@
 #include "../src/persistedmap.h"
 #include "org_jumbo_JumboJni.h"
-#include <sys/stat.h>
 
 typedef struct State State;
 struct State {
     PersistedMap** map;
+    char* directory;
     int size;
 };
 
@@ -16,22 +16,19 @@ jfieldID get_state_pointer_field(JNIEnv* env, jobject obj) {
 }
 
 JNIEXPORT void JNICALL Java_org_jumbo_JumboJni_init(JNIEnv * env, jobject obj, jint size) {
-    struct stat st = {0};
-    if (stat("db", &st) == -1) {
-        mkdir("db", 0700);
-    }
-
     State* state = (State*) malloc(sizeof(State));
-    state->map = build_maps(size);
+    state->directory = (char*) malloc(strlen("db"));
+    strcpy(state->directory, "db");
+    state->map = build_maps(state->directory, size);
     state->size = size;
     jfieldID ptr = get_state_pointer_field(env, obj);
-    (*env)->SetLongField(env, obj, ptr, state);
+    (*env)->SetLongField(env, obj, ptr, (long) state);
 }
 
 JNIEXPORT void JNICALL Java_org_jumbo_JumboJni_put(JNIEnv * env, jobject obj, jint table, jbyteArray key, jbyteArray value) {
     jfieldID ptr = get_state_pointer_field(env, obj);
     State* state = (State*) (*env)->GetLongField(env, obj, ptr);
-    PersistedMap* map = getTable(table, state->map, state->size);
+    PersistedMap* map = getTable(state->directory, table, state->map, state->size);
     int keyLen = (*env)->GetArrayLength(env, key);
     signed char keyBuf[keyLen];
     (*env)->GetByteArrayRegion(env, key, 0, keyLen, keyBuf);
@@ -45,7 +42,7 @@ JNIEXPORT void JNICALL Java_org_jumbo_JumboJni_put(JNIEnv * env, jobject obj, ji
 JNIEXPORT jbyteArray JNICALL Java_org_jumbo_JumboJni_get(JNIEnv * env, jobject obj, jint table, jbyteArray key) {
     jfieldID ptr = get_state_pointer_field(env, obj);
     State* state = (State*) (*env)->GetLongField(env, obj, ptr);
-    PersistedMap* map = getTable(table, state->map, state->size);
+    PersistedMap* map = getTable(state->directory, table, state->map, state->size);
     int keyLen = (*env)->GetArrayLength(env, key);
     signed char keyBuf[keyLen];
     (*env)->GetByteArrayRegion(env, key, 0, keyLen, keyBuf);
@@ -66,7 +63,7 @@ JNIEXPORT jbyteArray JNICALL Java_org_jumbo_JumboJni_get(JNIEnv * env, jobject o
 JNIEXPORT void JNICALL Java_org_jumbo_JumboJni_del(JNIEnv * env, jobject obj, jint table, jbyteArray key) {
     jfieldID ptr = get_state_pointer_field(env, obj);
     State* state = (State*) (*env)->GetLongField(env, obj, ptr);
-    PersistedMap* map = getTable(table, state->map, state->size);
+    PersistedMap* map = getTable(state->directory, table, state->map, state->size);
     int keyLen = (*env)->GetArrayLength(env, key);
     char keyBuf[keyLen];
     (*env)->GetByteArrayRegion(env, key, 0, keyLen, keyBuf);
@@ -76,7 +73,7 @@ JNIEXPORT void JNICALL Java_org_jumbo_JumboJni_del(JNIEnv * env, jobject obj, ji
 JNIEXPORT jobjectArray JNICALL Java_org_jumbo_JumboJni_keys(JNIEnv * env, jobject obj, jint table, jint limit) {
     jfieldID ptr = get_state_pointer_field(env, obj);
     State* state = (State*) (*env)->GetLongField(env, obj, ptr);
-    PersistedMap* map = getTable(table, state->map, state->size);
+    PersistedMap* map = getTable(state->directory, table, state->map, state->size);
 
     Key** key = keys(map->map, limit);
     int no_responses = MIN(map->map->count, limit);

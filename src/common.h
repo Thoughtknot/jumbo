@@ -64,6 +64,7 @@ struct PersistedMap {
     Persist* persist;
     HashMap* map;
     int mapsize;
+    unsigned long stateSeqNo;
 };
 
 typedef struct client_args client_args;

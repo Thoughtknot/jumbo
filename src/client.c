@@ -64,7 +64,7 @@ void *handle_client_socket(void * args) {
             int table = readInt(sockfd);
 
             pthread_mutex_lock(&lock[table]); 
-            PersistedMap* map = getTable(table, pm, mapsize);
+            PersistedMap* map = getTable("db", table, pm, mapsize);
             
             int keyLen = readInt(sockfd);
             char* key = readBytes(sockfd, keyLen);
@@ -82,7 +82,7 @@ void *handle_client_socket(void * args) {
             int table = readInt(sockfd);
             
             pthread_mutex_lock(&lock[table]); 
-            PersistedMap* map = getTable(table, pm, mapsize);
+            PersistedMap* map = getTable("db", table, pm, mapsize);
 
             int keyLen = readInt(sockfd);
             char* key = readBytes(sockfd, keyLen);
@@ -103,7 +103,7 @@ void *handle_client_socket(void * args) {
         else if (operation == DEL) {
             int table = readInt(sockfd);
             pthread_mutex_lock(&lock[table]); 
-            PersistedMap* map = getTable(table, pm, mapsize);
+            PersistedMap* map = getTable("db", table, pm, mapsize);
 
             int keyLen = readInt(sockfd);
             char* key = readBytes(sockfd, keyLen);
@@ -118,7 +118,7 @@ void *handle_client_socket(void * args) {
             int table = readInt(sockfd);
 
             pthread_mutex_lock(&lock[table]); 
-            PersistedMap* map = getTable(table, pm, mapsize);
+            PersistedMap* map = getTable("db", table, pm, mapsize);
 
             int limit = readInt(sockfd);
 

@@ -15,8 +15,7 @@
 typedef struct sockaddr sockaddr;
 typedef struct sockaddr_in sockaddr_in;
 
-// Driver function 
-int main(int argc,char *aa[]) 
+int main(int argc, char *aa[]) 
 { 
     unsigned int sockfd, connfd, len; 
     sockaddr_in servaddr; 
@@ -31,7 +30,7 @@ int main(int argc,char *aa[])
     memset(&servaddr, 0, sizeof(servaddr)); 
   
     servaddr.sin_family = AF_INET; 
-    servaddr.sin_addr.s_addr = htonl(INADDR_ANY); 
+    servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
     servaddr.sin_port = htons(PORT); 
   
     if ((bind(sockfd, (sockaddr*)&servaddr, sizeof(servaddr))) != 0) { 
@@ -41,7 +40,7 @@ int main(int argc,char *aa[])
     else
         printf("Socket successfully bound.\n"); 
   
-    PersistedMap** pm = build_maps(SIZE);
+    PersistedMap** pm = build_maps("db", SIZE);
 
     if ((listen(sockfd, 5)) != 0) { 
         printf("Listen failed.\n"); 

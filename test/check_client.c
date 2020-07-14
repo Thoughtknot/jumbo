@@ -1,25 +1,23 @@
 #include <check.h>
 #include <time.h>
+#include <sys/stat.h>
 #include "../src/persistedmap.h"
 
 START_TEST (test_client_basic)
 {
-    PersistedMap** pms = (PersistedMap**) calloc(1, sizeof(PersistedMap*));
-    pms[0] = NULL;
-
-    PersistedMap* pm = getTable(0, pms, 100);
-    char a[100][1];
-    for (int i = 0; i < 100; i++) {
-        a[i][0] = i;
-    }
-
-    /*
-    clock_t start = clock(), diff;
-    for (int i = 0; i < 10000; i++) {
-        persist_and_put(pm, 1, a[i % 100], 13, "Hello world!");
-    }
-    diff = (double)(clock() - start) * 1000000 / CLOCKS_PER_SEC;
-    printf("Clock: %ld\n", diff);
-    */
+    char directory[] = "dbtest";
+    struct stat st = {0};
+    PersistedMap** pms = build_maps(directory, 1);
+    PersistedMap* pm = getTable(directory, 0, pms, 100);
+    persist_and_put(pm, 2, "ap", 3, "too");
+    persist_and_put(pm, 2, "ap", 3, "key");
+    printf("Stat %s\n", pm->persist->name);
+    stat(pm->persist->name, &st);
+    int sizeBf = st.st_size;
+    compact_map(pm);
+    stat(pm->persist->name, &st);
+    int sizeAfter = st.st_size;
+    free_maps(pms, 1);
+    ck_assert(sizeBf > sizeAfter);
 }
 END_TEST

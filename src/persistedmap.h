@@ -8,11 +8,13 @@
 #include "persist.h"
 #include <dirent.h>
 #include <unistd.h> 
+#include <sys/stat.h>
 
-PersistedMap** build_maps(int size);
+void compact_map(PersistedMap* map);
+PersistedMap** build_maps(char* dir, int size);
 void free_maps(PersistedMap** map, int size);
-void *handle_client_socket(void * args);
-PersistedMap* getTable(int table, PersistedMap** pm, int mapsize);
-void persist_and_put(PersistedMap* map, int keyLen, char* key, int valueLen, char* val);
 void persist_and_del(PersistedMap* map, int keyLen, char* keys);
+void persist_and_put(PersistedMap* map, int keyLen, char* key, int valueLen, char* val);
+void *handle_client_socket(void * args);
+PersistedMap* getTable(char* directory, int table, PersistedMap** pm, int mapsize);
 #endif
