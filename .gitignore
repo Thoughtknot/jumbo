@@ -1,6 +1,8 @@
+*.dll
 *.o
 *.so
 jumbo
 test_suite
 db/
+dbtest/
 .vscode

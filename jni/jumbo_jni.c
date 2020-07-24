@@ -16,13 +16,17 @@ jfieldID get_state_pointer_field(JNIEnv* env, jobject obj) {
 }
 
 JNIEXPORT void JNICALL Java_org_jumbo_JumboJni_init(JNIEnv * env, jobject obj, jint size) {
+    printf("a\n");
     State* state = (State*) malloc(sizeof(State));
-    state->directory = (char*) malloc(strlen("db"));
+    printf("a\n");
+    state->directory = (char*) malloc(strlen("db") + 1);
+    printf("a\n");
     strcpy(state->directory, "db");
+    printf("a\n");
     state->map = build_maps(state->directory, size);
     state->size = size;
     jfieldID ptr = get_state_pointer_field(env, obj);
-    (*env)->SetLongField(env, obj, ptr, (long) state);
+    (*env)->SetLongField(env, obj, ptr, (int64_t) state);
 }
 
 JNIEXPORT void JNICALL Java_org_jumbo_JumboJni_put(JNIEnv * env, jobject obj, jint table, jbyteArray key, jbyteArray value) {
@@ -35,7 +39,6 @@ JNIEXPORT void JNICALL Java_org_jumbo_JumboJni_put(JNIEnv * env, jobject obj, ji
     int valLen = (*env)->GetArrayLength(env, value);
     signed char valBuf[valLen];
     (*env)->GetByteArrayRegion(env, value, 0, valLen, valBuf);
-    printf("PUT %s\n", keyBuf);
     persist_and_put(map, keyLen, keyBuf, valLen, valBuf);
 }
 
@@ -47,7 +50,6 @@ JNIEXPORT jbyteArray JNICALL Java_org_jumbo_JumboJni_get(JNIEnv * env, jobject o
     signed char keyBuf[keyLen];
     (*env)->GetByteArrayRegion(env, key, 0, keyLen, keyBuf);
 
-    printf("GET %s\n", keyBuf);
     Value* val = get(map->map, keyLen, keyBuf);
     jbyteArray array;
     if (val == NULL) {

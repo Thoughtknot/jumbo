@@ -19,6 +19,7 @@ START_TEST (test_persist_basic)
     free_object(val1);
     free_object(val2);
     free_object(val3);
-    remove_free_persist(q);
+    free_persist(q);
+    remove("tst.file");
 }
 END_TEST

@@ -3,7 +3,6 @@
 #include <string.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include "map.h"
 #ifndef common_h
 #define common_h
 #define MIN(a,b) ((a) < (b) ? (a) : (b))

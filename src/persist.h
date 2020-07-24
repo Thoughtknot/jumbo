@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include "common.h"
-void remove_free_persist(Persist* p);
+
 void free_persist(Persist* p);
 void free_object(Object* o);
 

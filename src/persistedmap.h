@@ -6,9 +6,6 @@
 #include "common.h"
 #include "map.h"
 #include "persist.h"
-#include <dirent.h>
-#include <unistd.h> 
-#include <sys/stat.h>
 
 void compact_map(PersistedMap* map);
 PersistedMap** build_maps(char* dir, int size);

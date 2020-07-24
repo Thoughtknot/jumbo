@@ -1,10 +1,5 @@
 #include "persist.h"
 
-void remove_free_persist(Persist* p) {
-    remove(p->name);
-    free_persist(p);
-}
-
 void free_persist(Persist* p) {
     fclose(p->fp);
     free(p->name);
@@ -28,7 +23,7 @@ Persist* create_persist(char * path, bool create) {
         perror(__func__);
         exit(EXIT_FAILURE);
     }
-    p->name = (char*) malloc(strlen(path));
+    p->name = (char*) malloc(strlen(path) + 1);
     strcpy(p->name, path);
     return p;
 }
@@ -46,11 +41,14 @@ void persist(Persist* persist, int size, unsigned char operation, char* bytes) {
 
 Object* load(Persist* persist) {
     Object * val = (Object *) malloc(sizeof(Object));
-    fread(&val->operation, 1, 1, persist->fp);
-    fread(&val->size, sizeof(int), 1, persist->fp);
+    if (!fread(&val->operation, 1, 1, persist->fp)
+            || !fread(&val->size, sizeof(int), 1, persist->fp)) {
+        free(val);
+        return NULL;
+    }
     val->bytes = (char*) malloc(val->size);
-    fread(val->bytes, 1, val->size, persist->fp);
-    if(ferror(persist->fp)){
+    if (fread(val->bytes, 1, val->size, persist->fp) != val->size
+            || ferror(persist->fp)){
         free_object(val);
         return NULL;
     }
