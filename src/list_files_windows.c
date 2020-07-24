@@ -31,10 +31,9 @@ DirectoryContents* list_directory_contents(const char *directory) {
         return contents;
     }
     do {
-        sprintf(sPath, "%s\\%s", directory, fdFile.cFileName);
-        printf("Found file: %s\n", sPath);
-        filenames[numFiles] = (char*) malloc(strlen(sPath) + 1);
-        strcpy(filenames[numFiles], sPath);
+        printf("Found file: %s\n", fdFile.cFileName);
+        filenames[numFiles] = (char*) malloc(strlen(fdFile.cFileName) + 1);
+        strcpy(filenames[numFiles], fdFile.cFileName);
         ++numFiles;
     }
     while(FindNextFile(hFind, &fdFile));
